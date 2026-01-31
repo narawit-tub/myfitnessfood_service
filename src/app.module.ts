@@ -1,3 +1,4 @@
+import { AuthService } from './auth/auth.service';
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -6,6 +7,9 @@ import { MealRecordsModule } from './meal_records/meal_records.module';
 import { IntakeGoalsModule } from './intake_goals/intake_goals.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
+import { AuthModule } from './auth/auth.module';
+import { PassportModule } from '@nestjs/passport';
+import { LocalStrategy } from './auth/local.strategy';
 
 @Module({
   imports: [
@@ -22,9 +26,11 @@ import { DataSource } from 'typeorm';
       autoLoadEntities: true,
       synchronize: true,
     }),
+    AuthModule,
+    PassportModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, AuthService, LocalStrategy],
 })
 export class AppModule {
   constructor(private dataSource: DataSource) {}
