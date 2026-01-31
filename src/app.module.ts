@@ -1,4 +1,3 @@
-import { AuthService } from './auth/auth.service';
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -9,7 +8,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { AuthModule } from './auth/auth.module';
 import { PassportModule } from '@nestjs/passport';
-import { LocalStrategy } from './auth/local.strategy';
 
 @Module({
   imports: [
@@ -30,7 +28,7 @@ import { LocalStrategy } from './auth/local.strategy';
     PassportModule,
   ],
   controllers: [AppController],
-  providers: [AppService, AuthService, LocalStrategy],
+  providers: [AppService],
 })
 export class AppModule {
   constructor(private dataSource: DataSource) {}
