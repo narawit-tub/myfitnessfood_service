@@ -1,0 +1,20 @@
+// tracking meal part
+users
+
+calorie/nutrience intake goal per day
+
+meal records
+- food/drink name
+- protein
+- carbs
+- fats
+- calories
+- date/time consumed
+- notes
+- meal type (breakfast, lunch, dinner, snack)
+- user id
+- date created
+- date updated
+- id
+
+// recommend food part
