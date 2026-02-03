@@ -1,0 +1,787 @@
+openapi: 3.0.3
+info:
+  title: MyFitnessFood API
+  version: 1.0.0
+  description: |
+    Backend API for MyFitnessFood - A fitness nutrition tracking application that helps users:
+    - Track meal calories and macronutrients
+    - Get AI-powered food suggestions to achieve daily goals
+    - Receive recipe recommendations with ingredients and cooking steps
+
+    ## Authentication
+    This API uses JWT Bearer token authentication. After logging in via `/auth/login`,
+    include the returned token in the Authorization header as `Bearer {token}`.
+
+    ## Current Features
+    - User management and authentication
+    - Meal record tracking (protein, carbs, fats)
+    - Intake goals management
+
+    ## Planned Features
+    - AI-powered meal suggestions
+    - Recipe recommendations
+    - Daily goal tracking and insights
+
+  contact:
+    name: MyFitnessFood Team
+  license:
+    name: MIT
+
+servers:
+  - url: http://localhost:3000
+    description: Local development server
+  - url: https://api.myfitnessfood.com
+    description: Production server (placeholder)
+
+tags:
+  - name: Auth
+    description: Authentication endpoints
+  - name: Users
+    description: User management
+  - name: Meal Records
+    description: Meal tracking and nutrition logging
+  - name: Intake Goals
+    description: Daily nutrition goals management
+
+paths:
+  /auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Login user
+      description: Authenticate user with username and password, returns JWT access token
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                  example: johndoe
+                password:
+                  type: string
+                  format: password
+                  example: password123
+      responses:
+        '200':
+          description: Successfully authenticated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                    description: JWT token valid for 60 seconds
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        '401':
+          description: Unauthorized - Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /profile:
+    get:
+      tags:
+        - Auth
+      summary: Get current user profile
+      description: Returns the authenticated user's profile information
+      operationId: getProfile
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: User profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          description: Unauthorized - Invalid or expired token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /users:
+    post:
+      tags:
+        - Users
+      summary: Create a new user
+      description: Register a new user account
+      operationId: createUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserDto'
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Bad request - Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    get:
+      tags:
+        - Users
+      summary: Get all users
+      description: Retrieve a list of all registered users
+      operationId: getAllUsers
+      responses:
+        '200':
+          description: List of users retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+
+  /users/{id}:
+    get:
+      tags:
+        - Users
+      summary: Get user by ID
+      description: Retrieve a specific user by their ID
+      operationId: getUserById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: User ID
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: User retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /meal-records:
+    post:
+      tags:
+        - Meal Records
+      summary: Create a meal record
+      description: Log a new meal with macronutrient information
+      operationId: createMealRecord
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateMealRecordDto'
+      responses:
+        '201':
+          description: Meal record created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MealRecord'
+        '400':
+          description: Bad request - Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    get:
+      tags:
+        - Meal Records
+      summary: Get all meal records
+      description: Retrieve all meal records across all users
+      operationId: getAllMealRecords
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: List of meal records retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MealRecord'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /meal-records/user/{userId}:
+    get:
+      tags:
+        - Meal Records
+      summary: Get meal records by user
+      description: Retrieve all meal records for a specific user
+      operationId: getMealRecordsByUser
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: User ID
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: User meal records retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MealRecord'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /meal-records/{id}:
+    get:
+      tags:
+        - Meal Records
+      summary: Get meal record by ID
+      description: Retrieve a specific meal record
+      operationId: getMealRecordById
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Meal record ID
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Meal record retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MealRecord'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Meal record not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /intake-goals:
+    post:
+      tags:
+        - Intake Goals
+      summary: Create an intake goal
+      description: Set daily nutrition goals for a user
+      operationId: createIntakeGoal
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateIntakeGoalDto'
+      responses:
+        '201':
+          description: Intake goal created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IntakeGoal'
+        '400':
+          description: Bad request - Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    get:
+      tags:
+        - Intake Goals
+      summary: Get all intake goals
+      description: Retrieve all intake goals
+      operationId: getAllIntakeGoals
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: List of intake goals retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IntakeGoal'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /intake-goals/{id}:
+    get:
+      tags:
+        - Intake Goals
+      summary: Get intake goal by ID
+      description: Retrieve a specific intake goal
+      operationId: getIntakeGoalById
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Intake goal ID
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Intake goal retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IntakeGoal'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Intake goal not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    patch:
+      tags:
+        - Intake Goals
+      summary: Update intake goal
+      description: Update an existing intake goal
+      operationId: updateIntakeGoal
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Intake goal ID
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateIntakeGoalDto'
+      responses:
+        '200':
+          description: Intake goal updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IntakeGoal'
+        '400':
+          description: Bad request - Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Intake goal not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      tags:
+        - Intake Goals
+      summary: Delete intake goal
+      description: Delete an existing intake goal
+      operationId: deleteIntakeGoal
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Intake goal ID
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Intake goal deleted successfully
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Intake goal not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token obtained from /auth/login endpoint
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique user identifier
+          example: 1
+        username:
+          type: string
+          description: Username for login
+          example: johndoe
+        firstName:
+          type: string
+          description: User's first name
+          example: John
+        lastName:
+          type: string
+          description: User's last name
+          example: Doe
+        isActive:
+          type: boolean
+          description: Whether the user account is active
+          default: true
+          example: true
+        mealRecords:
+          type: array
+          description: User's meal records (included when populated)
+          items:
+            $ref: '#/components/schemas/MealRecord'
+      required:
+        - id
+        - username
+        - firstName
+        - lastName
+
+    CreateUserDto:
+      type: object
+      properties:
+        username:
+          type: string
+          description: Desired username (must be unique)
+          example: johndoe
+        password:
+          type: string
+          format: password
+          description: User password (will be hashed)
+          example: SecurePass123!
+        firstName:
+          type: string
+          description: User's first name
+          example: John
+        lastName:
+          type: string
+          description: User's last name
+          example: Doe
+      required:
+        - username
+        - password
+        - firstName
+        - lastName
+
+    MealRecord:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique meal record identifier
+          example: 1
+        name:
+          type: string
+          description: Name of the meal
+          example: Grilled Chicken Breast with Rice
+        protein_intake:
+          type: number
+          format: float
+          description: Protein content in grams
+          example: 45.5
+        carb_intake:
+          type: number
+          format: float
+          description: Carbohydrate content in grams
+          example: 60.0
+        fat_intake:
+          type: number
+          format: float
+          description: Fat content in grams
+          example: 12.5
+        created_at:
+          type: string
+          format: date-time
+          description: Timestamp when the meal was recorded
+          example: '2024-01-15T14:30:00Z'
+        user:
+          $ref: '#/components/schemas/User'
+          description: User who recorded this meal
+      required:
+        - id
+        - name
+        - protein_intake
+        - carb_intake
+        - fat_intake
+        - created_at
+
+    CreateMealRecordDto:
+      type: object
+      properties:
+        userId:
+          type: integer
+          description: ID of the user recording the meal
+          example: 1
+        name:
+          type: string
+          description: Name of the meal
+          example: Grilled Chicken Breast with Rice
+        protein_intake:
+          type: number
+          format: float
+          description: Protein content in grams
+          minimum: 0
+          example: 45.5
+        carb_intake:
+          type: number
+          format: float
+          description: Carbohydrate content in grams
+          minimum: 0
+          example: 60.0
+        fat_intake:
+          type: number
+          format: float
+          description: Fat content in grams
+          minimum: 0
+          example: 12.5
+      required:
+        - userId
+        - name
+        - protein_intake
+        - carb_intake
+        - fat_intake
+
+    IntakeGoal:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique intake goal identifier
+          example: 1
+        userId:
+          type: integer
+          description: ID of the user this goal belongs to
+          example: 1
+        dailyCalories:
+          type: number
+          format: float
+          description: Target daily calorie intake
+          example: 2500
+        dailyProtein:
+          type: number
+          format: float
+          description: Target daily protein intake in grams
+          example: 150
+        dailyCarbs:
+          type: number
+          format: float
+          description: Target daily carbohydrate intake in grams
+          example: 250
+        dailyFat:
+          type: number
+          format: float
+          description: Target daily fat intake in grams
+          example: 80
+        startDate:
+          type: string
+          format: date
+          description: Start date for this goal
+          example: '2024-01-01'
+        endDate:
+          type: string
+          format: date
+          description: End date for this goal (optional)
+          example: '2024-06-30'
+      description: Daily nutrition intake goals for a user (entity not fully implemented yet)
+
+    CreateIntakeGoalDto:
+      type: object
+      properties:
+        userId:
+          type: integer
+          description: ID of the user setting the goal
+          example: 1
+        dailyCalories:
+          type: number
+          format: float
+          description: Target daily calorie intake
+          minimum: 0
+          example: 2500
+        dailyProtein:
+          type: number
+          format: float
+          description: Target daily protein intake in grams
+          minimum: 0
+          example: 150
+        dailyCarbs:
+          type: number
+          format: float
+          description: Target daily carbohydrate intake in grams
+          minimum: 0
+          example: 250
+        dailyFat:
+          type: number
+          format: float
+          description: Target daily fat intake in grams
+          minimum: 0
+          example: 80
+        startDate:
+          type: string
+          format: date
+          description: Start date for this goal
+          example: '2024-01-01'
+        endDate:
+          type: string
+          format: date
+          description: End date for this goal (optional)
+          example: '2024-06-30'
+      required:
+        - userId
+        - dailyCalories
+        - dailyProtein
+        - dailyCarbs
+        - dailyFat
+        - startDate
+
+    UpdateIntakeGoalDto:
+      type: object
+      properties:
+        dailyCalories:
+          type: number
+          format: float
+          description: Target daily calorie intake
+          minimum: 0
+          example: 2500
+        dailyProtein:
+          type: number
+          format: float
+          description: Target daily protein intake in grams
+          minimum: 0
+          example: 150
+        dailyCarbs:
+          type: number
+          format: float
+          description: Target daily carbohydrate intake in grams
+          minimum: 0
+          example: 250
+        dailyFat:
+          type: number
+          format: float
+          description: Target daily fat intake in grams
+          minimum: 0
+          example: 80
+        endDate:
+          type: string
+          format: date
+          description: End date for this goal
+          example: '2024-06-30'
+      description: All fields are optional for partial updates
+
+    Error:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          description: HTTP status code
+          example: 400
+        message:
+          type: string
+          description: Error message
+          example: Invalid request parameters
+        error:
+          type: string
+          description: Error type
+          example: Bad Request
+      required:
+        - statusCode
+        - message
