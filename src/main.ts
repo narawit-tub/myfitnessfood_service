@@ -44,6 +44,7 @@ async function bootstrap() {
   });
 
   const PORT = process.env.PORT ?? 3000;
+  app.enableCors();
   await app.listen(PORT);
   console.log(`🚀 Application is running on: http://localhost:${PORT}`);
   console.log(`📚 API Docs available at: http://localhost:${PORT}/api/docs`);
