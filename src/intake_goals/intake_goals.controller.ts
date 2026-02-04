@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { IntakeGoalsService } from './intake_goals.service';
 import { CreateIntakeGoalDto } from './dto/create-intake_goal.dto';
@@ -12,7 +20,8 @@ export class IntakeGoalsController {
   @Post()
   @ApiOperation({
     summary: 'Create an intake goal',
-    description: 'Set daily nutrition goals for a user (calories, protein, carbs, fat)',
+    description:
+      'Set daily nutrition goals for a user (calories, protein, carbs, fat)',
   })
   @ApiResponse({
     status: 201,
@@ -85,7 +94,10 @@ export class IntakeGoalsController {
     status: 404,
     description: 'Intake goal not found',
   })
-  update(@Param('id') id: string, @Body() updateIntakeGoalDto: UpdateIntakeGoalDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateIntakeGoalDto: UpdateIntakeGoalDto,
+  ) {
     return this.intakeGoalsService.update(+id, updateIntakeGoalDto);
   }
 

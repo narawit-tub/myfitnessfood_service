@@ -9,14 +9,6 @@ export class CreateIntakeGoalDto {
   userId: number;
 
   @ApiProperty({
-    description: 'Target daily calorie intake',
-    example: 2500,
-    type: 'number',
-    minimum: 0,
-  })
-  dailyCalories: number;
-
-  @ApiProperty({
     description: 'Target daily protein intake in grams',
     example: 150,
     type: 'number',

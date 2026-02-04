@@ -1,4 +1,4 @@
-import { MealRecord } from 'src/meal_records/entities/meal_record.entity';
+import { MealRecord } from '../../meal_records/entities/meal_record.entity';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
 @Entity()
