@@ -27,6 +27,13 @@ export class IntakeGoalsService {
     return this.intakeGoalRepository.find({ relations: ['user'] });
   }
 
+  findAllByUserId(id: number): Promise<IntakeGoal[]> {
+    return this.intakeGoalRepository.find({
+      where: { userId: id },
+      order: { startDate: 'DESC' },
+    });
+  }
+
   async findOne(id: number): Promise<IntakeGoal> {
     const intakeGoal = await this.intakeGoalRepository.findOne({
       where: { id },
