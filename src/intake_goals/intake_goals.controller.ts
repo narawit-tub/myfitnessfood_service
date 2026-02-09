@@ -11,6 +11,7 @@ import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { IntakeGoalsService } from './intake_goals.service';
 import { CreateIntakeGoalDto } from './dto/create-intake_goal.dto';
 import { UpdateIntakeGoalDto } from './dto/update-intake_goal.dto';
+import { IntakeGoal } from './entities/intake_goal.entity';
 
 @ApiTags('Intake Goals')
 @Controller('intake-goals')
@@ -44,7 +45,7 @@ export class IntakeGoalsController {
     status: 200,
     description: 'List of intake goals retrieved successfully',
   })
-  findAll() {
+  findAll(): Promise<IntakeGoal[]> {
     return this.intakeGoalsService.findAll();
   }
 

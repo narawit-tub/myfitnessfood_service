@@ -1,0 +1,633 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/users": {
+      "post": {
+        "description": "Register a new user account with username and password",
+        "operationId": "UsersController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User created successfully"
+          },
+          "400": {
+            "description": "Bad request - Invalid input data"
+          }
+        },
+        "summary": "Create a new user",
+        "tags": [
+          "Users"
+        ]
+      },
+      "get": {
+        "description": "Retrieve a list of all registered users",
+        "operationId": "UsersController_findAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of users retrieved successfully"
+          }
+        },
+        "summary": "Get all users",
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "description": "Retrieve a specific user by their ID",
+        "operationId": "UsersController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "User ID",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User retrieved successfully"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        },
+        "summary": "Get user by ID",
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/meal-records": {
+      "post": {
+        "description": "Log a new meal with macronutrient information (protein, carbs, fat)",
+        "operationId": "MealRecordsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateMealRecordDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Meal record created successfully"
+          },
+          "400": {
+            "description": "Bad request - Invalid input data"
+          }
+        },
+        "summary": "Create a meal record",
+        "tags": [
+          "Meal Records"
+        ]
+      },
+      "get": {
+        "description": "Retrieve all meal records across all users",
+        "operationId": "MealRecordsController_findAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of meal records retrieved successfully"
+          }
+        },
+        "summary": "Get all meal records",
+        "tags": [
+          "Meal Records"
+        ]
+      }
+    },
+    "/meal-records/user/{userId}": {
+      "get": {
+        "description": "Retrieve all meal records for a specific user",
+        "operationId": "MealRecordsController_findAllForUser",
+        "parameters": [
+          {
+            "name": "userId",
+            "required": true,
+            "in": "path",
+            "description": "User ID",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User meal records retrieved successfully"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        },
+        "summary": "Get meal records by user",
+        "tags": [
+          "Meal Records"
+        ]
+      }
+    },
+    "/meal-records/{id}": {
+      "get": {
+        "description": "Retrieve a specific meal record",
+        "operationId": "MealRecordsController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Meal record ID",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Meal record retrieved successfully"
+          },
+          "404": {
+            "description": "Meal record not found"
+          }
+        },
+        "summary": "Get meal record by ID",
+        "tags": [
+          "Meal Records"
+        ]
+      }
+    },
+    "/intake-goals": {
+      "post": {
+        "description": "Set daily nutrition goals for a user (calories, protein, carbs, fat)",
+        "operationId": "IntakeGoalsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateIntakeGoalDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Intake goal created successfully"
+          },
+          "400": {
+            "description": "Bad request - Invalid input data"
+          }
+        },
+        "summary": "Create an intake goal",
+        "tags": [
+          "Intake Goals"
+        ]
+      },
+      "get": {
+        "description": "Retrieve all intake goals",
+        "operationId": "IntakeGoalsController_findAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of intake goals retrieved successfully"
+          }
+        },
+        "summary": "Get all intake goals",
+        "tags": [
+          "Intake Goals"
+        ]
+      }
+    },
+    "/intake-goals/{id}": {
+      "get": {
+        "description": "Retrieve a specific intake goal",
+        "operationId": "IntakeGoalsController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Intake goal ID",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Intake goal retrieved successfully"
+          },
+          "404": {
+            "description": "Intake goal not found"
+          }
+        },
+        "summary": "Get intake goal by ID",
+        "tags": [
+          "Intake Goals"
+        ]
+      },
+      "patch": {
+        "description": "Update an existing intake goal",
+        "operationId": "IntakeGoalsController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Intake goal ID",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateIntakeGoalDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Intake goal updated successfully"
+          },
+          "400": {
+            "description": "Bad request - Invalid input data"
+          },
+          "404": {
+            "description": "Intake goal not found"
+          }
+        },
+        "summary": "Update intake goal",
+        "tags": [
+          "Intake Goals"
+        ]
+      },
+      "delete": {
+        "description": "Delete an existing intake goal",
+        "operationId": "IntakeGoalsController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Intake goal ID",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Intake goal deleted successfully"
+          },
+          "404": {
+            "description": "Intake goal not found"
+          }
+        },
+        "summary": "Delete intake goal",
+        "tags": [
+          "Intake Goals"
+        ]
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "description": "Authenticate user with username and password, returns JWT access token valid for 60 seconds",
+        "operationId": "AuthController_login",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "username",
+                  "password"
+                ],
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "example": "johndoe",
+                    "description": "Username for authentication"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "password123",
+                    "description": "User password"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "access_token": {
+                      "type": "string",
+                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                      "description": "JWT access token"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid credentials"
+          }
+        },
+        "summary": "Login user",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/auth/profile": {
+      "get": {
+        "description": "Returns the authenticated user profile information",
+        "operationId": "AuthController_getProfile",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "User profile retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "number",
+                      "example": 1
+                    },
+                    "username": {
+                      "type": "string",
+                      "example": "johndoe"
+                    },
+                    "firstName": {
+                      "type": "string",
+                      "example": "John"
+                    },
+                    "lastName": {
+                      "type": "string",
+                      "example": "Doe"
+                    },
+                    "isActive": {
+                      "type": "boolean",
+                      "example": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or expired token"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Get current user profile",
+        "tags": [
+          "Auth"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "MyFitnessFood API",
+    "description": "Backend API for fitness nutrition tracking with AI-powered suggestions. Track meals, set nutrition goals, and get personalized recommendations.",
+    "version": "1.0.0",
+    "contact": {}
+  },
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "Authentication endpoints"
+    },
+    {
+      "name": "Users",
+      "description": "User management"
+    },
+    {
+      "name": "Meal Records",
+      "description": "Meal tracking and nutrition logging"
+    },
+    {
+      "name": "Intake Goals",
+      "description": "Daily nutrition goals management"
+    }
+  ],
+  "servers": [],
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http",
+        "name": "JWT",
+        "description": "Enter JWT token (obtained from /auth/login)",
+        "in": "header"
+      }
+    },
+    "schemas": {
+      "CreateUserDto": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "description": "Username for login",
+            "example": "johndoe"
+          },
+          "password": {
+            "type": "string",
+            "description": "User password",
+            "example": "password123",
+            "format": "password"
+          },
+          "firstName": {
+            "type": "string",
+            "description": "User's first name",
+            "example": "John"
+          },
+          "lastName": {
+            "type": "string",
+            "description": "User's last name",
+            "example": "Doe"
+          }
+        },
+        "required": [
+          "username",
+          "password",
+          "firstName",
+          "lastName"
+        ]
+      },
+      "CreateMealRecordDto": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "number",
+            "description": "ID of the user recording the meal",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the meal",
+            "example": "Grilled Chicken Breast with Rice"
+          },
+          "protein_intake": {
+            "type": "number",
+            "description": "Protein content in grams",
+            "example": 45.5,
+            "minimum": 0
+          },
+          "carb_intake": {
+            "type": "number",
+            "description": "Carbohydrate content in grams",
+            "example": 60,
+            "minimum": 0
+          },
+          "fat_intake": {
+            "type": "number",
+            "description": "Fat content in grams",
+            "example": 12.5,
+            "minimum": 0
+          }
+        },
+        "required": [
+          "userId",
+          "name",
+          "protein_intake",
+          "carb_intake",
+          "fat_intake"
+        ]
+      },
+      "CreateIntakeGoalDto": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "number",
+            "description": "ID of the user setting the goal",
+            "example": 1
+          },
+          "dailyProtein": {
+            "type": "number",
+            "description": "Target daily protein intake in grams",
+            "example": 150,
+            "minimum": 0
+          },
+          "dailyCarbs": {
+            "type": "number",
+            "description": "Target daily carbohydrate intake in grams",
+            "example": 250,
+            "minimum": 0
+          },
+          "dailyFat": {
+            "type": "number",
+            "description": "Target daily fat intake in grams",
+            "example": 80,
+            "minimum": 0
+          },
+          "startDate": {
+            "type": "string",
+            "description": "Start date for this goal",
+            "example": "2024-01-01",
+            "format": "date"
+          },
+          "endDate": {
+            "type": "string",
+            "description": "End date for this goal (optional)",
+            "example": "2024-06-30",
+            "format": "date"
+          }
+        },
+        "required": [
+          "userId",
+          "dailyProtein",
+          "dailyCarbs",
+          "dailyFat",
+          "startDate"
+        ]
+      },
+      "UpdateIntakeGoalDto": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "number",
+            "description": "ID of the user setting the goal",
+            "example": 1
+          },
+          "dailyProtein": {
+            "type": "number",
+            "description": "Target daily protein intake in grams",
+            "example": 150,
+            "minimum": 0
+          },
+          "dailyCarbs": {
+            "type": "number",
+            "description": "Target daily carbohydrate intake in grams",
+            "example": 250,
+            "minimum": 0
+          },
+          "dailyFat": {
+            "type": "number",
+            "description": "Target daily fat intake in grams",
+            "example": 80,
+            "minimum": 0
+          },
+          "startDate": {
+            "type": "string",
+            "description": "Start date for this goal",
+            "example": "2024-01-01",
+            "format": "date"
+          },
+          "endDate": {
+            "type": "string",
+            "description": "End date for this goal (optional)",
+            "example": "2024-06-30",
+            "format": "date"
+          }
+        }
+      }
+    }
+  }
+}

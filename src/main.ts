@@ -36,6 +36,11 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
 
+  // Write swagger.json file in development
+  if (process.env.NODE_ENV !== 'production') {
+    fs.writeFileSync('./swagger.json', JSON.stringify(document, null, 2));
+  }
+
   // Serve API documentation at /api/docs
   SwaggerModule.setup('api/docs', app, document, {
     customSiteTitle: 'MyFitnessFood API Docs',
