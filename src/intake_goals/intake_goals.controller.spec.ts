@@ -4,6 +4,7 @@ import { IntakeGoalsService } from './intake_goals.service';
 import { CreateIntakeGoalDto } from './dto/create-intake_goal.dto';
 import { UpdateIntakeGoalDto } from './dto/update-intake_goal.dto';
 import { IntakeGoal } from './entities/intake_goal.entity';
+import type { RequestWithUser } from 'src/auth/model';
 
 describe('IntakeGoalsController', () => {
   let controller: IntakeGoalsController;
@@ -22,9 +23,14 @@ describe('IntakeGoalsController', () => {
     user: { id: 1, username: 'testuser' } as any,
   };
 
+  const mockReq = {
+    user: { id: 1, username: 'testuser' },
+  } as RequestWithUser;
+
   const mockService = {
     create: jest.fn(),
     findAll: jest.fn(),
+    findAllByUserId: jest.fn(),
     findOne: jest.fn(),
     findByUserId: jest.fn(),
     update: jest.fn(),
@@ -53,9 +59,9 @@ describe('IntakeGoalsController', () => {
   });
 
   describe('create', () => {
-    it('should create an intake goal', async () => {
+    it('should create an intake goal with userId from request', async () => {
       const createDto: CreateIntakeGoalDto = {
-        userId: 1,
+        userId: 999, // this should be overridden by req.user.id
         dailyProtein: 150,
         dailyCarbs: 250,
         dailyFat: 80,
@@ -64,21 +70,24 @@ describe('IntakeGoalsController', () => {
 
       mockService.create.mockResolvedValue(mockIntakeGoal);
 
-      const result = await controller.create(createDto);
+      const result = await controller.create(createDto, mockReq);
 
-      expect(service.create).toHaveBeenCalledWith(createDto);
+      expect(service.create).toHaveBeenCalledWith({
+        ...createDto,
+        userId: 1, // from req.user.id
+      });
       expect(result).toEqual(mockIntakeGoal);
     });
   });
 
   describe('findAll', () => {
-    it('should return all intake goals', async () => {
+    it('should return intake goals for the authenticated user', async () => {
       const intakeGoals = [mockIntakeGoal];
-      mockService.findAll.mockResolvedValue(intakeGoals);
+      mockService.findAllByUserId.mockResolvedValue(intakeGoals);
 
-      const result = await controller.findAll();
+      const result = await controller.findAll(mockReq);
 
-      expect(service.findAll).toHaveBeenCalled();
+      expect(service.findAllByUserId).toHaveBeenCalledWith(1);
       expect(result).toEqual(intakeGoals);
     });
   });
